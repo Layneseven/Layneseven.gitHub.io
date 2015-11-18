@@ -93,12 +93,12 @@ this.y = this.row * blockSize + 50;
 Block.prototype.setColor = function (a,b) { 
  if (this.filled===true){
     ctx.fillStyle = "white";
+    ctx.fillRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize); 
     this.filled = false;
-    ctx.fillRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize); 
  } else {
-    this.filled = true;
-    ctx.fillStyle = color;
+    ctx.fillStyle = color; 
     ctx.fillRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize); 
+    this.filled = true;
    };
 ctx.strokeRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize);
 };
