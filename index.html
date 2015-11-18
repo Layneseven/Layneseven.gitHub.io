@@ -1,0 +1,271 @@
+<!DOCTYPE>
+<html>
+<head>
+<title>Light Game</title>
+<style type="text/css">
+<!--
+.style1 {
+	font-size: 30px;
+	color: #990000;
+}
+.style2 {
+	font-size: 30px;
+	color: #FF0066;
+}
+.style3 {
+    font-size: 25px;
+    color: #990
+}
+-->
+</style>
+</head>
+<body>
+
+<p align=center><big><span class="style1">Click the square! Can you light all the squares<big><strong>?</big></strong></span></big></p>
+<p align=center class="style2">You can first practice with the size 3 board.<br>Then set the size as you like and click "Start new game".</br> </p>
+<p align=right class="style3">Think about strategy and shortcut! </p>
+<table width="50%" border=1 align=center>
+  <tbody>
+  <tr>
+    <td width="50%">
+      <div align=right>
+      <table id=score width=300 border=0>
+        <tbody>
+        <tr>
+          <td width=50>Moves Times: </td>
+          <td id=moves width=36>0</td>
+          <td width=45>Light off:</td>
+          <td id=off width=32>9</td>
+          <td width=40>Light on:</td>
+          <td id=on width=30>0</td></tr></tbody></table></div></td>
+    <td width="50%">
+      <div align=left>
+      <table width=100>
+        <tbody>
+        <tr>
+<td width=54>size: </td>
+          <td width=41><input id=gameSize size=2 value=3></td>
+<td width=54>time: </td>
+          <td width=41><input type="text" id="txt">
+          <td 
+        width=120><input onclick=newGame() type=button value="Start new game" >
+        </td></tr></tbody></table></div>
+    </td>
+  </tr></tbody></table>
+<style>#board {
+	cursor: default;
+}
+#board td {
+	width: 25px; height: 25px;
+}
+</style>
+<canvas id="canvas" width="1000" height="1000"></canvas>
+<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+<script>
+var canvas = document.getElementById("canvas"); 
+var ctx = canvas.getContext("2d");
+ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+ctx.strokeStyle = "grey";
+var blockSize = 50;
+var color = "yellow";
+var size = 3;
+var moves = 0;
+var off = size^2;
+var on = 0;
+var practiced = false;
+var timex;
+var timey;
+ctx.lineWidth =1;
+var times = 0;
+var win = false;
+//Create the Block constructor
+var Block = function (col, row) { 
+this.col = col;
+this.row = row;
+this.filled = false;
+this.x = this.col * blockSize + (canvas.width - blockSize*size)/2;
+this.y = this.row * blockSize + 50;
+};
+
+// setColor at the block's location
+
+Block.prototype.setColor = function (a,b) { 
+ if (this.filled===true){
+    ctx.fillStyle = "white";
+    this.filled = false;
+    ctx.fillRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize); 
+ } else {
+    this.filled = true;
+    ctx.fillStyle = color;
+    ctx.fillRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize); 
+   };
+ctx.strokeRect(a*blockSize + (canvas.width - blockSize*size)/2, b*blockSize + 50, blockSize, blockSize);
+};
+
+//draw the chequer
+Block.prototype.drawChequer = function () {
+ctx.strockStyle = "lightGrey";
+ctx.strokeRect(this.col * blockSize + (canvas.width - blockSize * size)/2, this.row * blockSize + 50, blockSize, blockSize);
+};
+
+//turnGrey
+Block.prototype.turnGrey = function () {
+  ctx.clearRect(this.x, this.y, blockSize, blockSize);
+  ctx.fillStyle = "lightgrey";
+  ctx.fillRect(this.x, this.y, blockSize, blockSize);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(this.x, this.y, blockSize, blockSize);
+};
+
+//turnBack
+Block.prototype.turnBack = function () {
+ctx.lineWidth = 1;
+ if (this.filled===true){
+    ctx.fillStyle = color;
+    ctx.fillRect(this.x, this.y, blockSize, blockSize);
+    ctx.strokeRect(this.x, this.y, blockSize, blockSize);
+ } else {
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x, this.y, blockSize, blockSize);
+    ctx.strokeRect(this.x, this.y, blockSize, blockSize);
+   };
+};
+//countLights
+var countLights = function (){
+ off = 0;
+ on = 0;
+   for(i=1;i<=size;i++)
+     for(k=1;k<=size;k++){
+        if (segments[i][k].filled===true) {
+          on++;}
+        else{
+          off++;}
+    };
+document.getElementById('on').innerText = on;
+if (off!=0){
+  document.getElementById('off').innerText = off
+} else{
+    document.getElementById('off').innerText = 0;
+    if (practiced===true) {
+       alert('You win! You just take ' + c + ' seconds and tried ' + moves +' times!');
+       stopCount();
+       
+    } else{
+       alert ('Excellent! Now start your real game and push the limit of time and moves!');
+       practiced = true;
+       
+      };
+    win = true;
+  };
+};
+
+//create the timer 
+var c=0;
+var t=0;
+var timedCount = function (){
+    document.getElementById('txt').value=c;
+    c=c+1;
+    t=setTimeout("timedCount()",1000);
+}
+var stopCount = function (){
+    c=0;
+    setTimeout("document.getElementById('txt').value=0",0);
+    clearTimeout(t);
+}
+
+//create board
+var createBoard = function (){
+
+segments=[];
+for (i=1;i<=size;i++){
+segments[i] = [];
+    for (k=1;k<=size;k++){
+     segments[i][k] = new Block(i,k)   
+    };
+    }
+for (i=1;i<=size;i++)
+   for (k=1;k<=size;k++){
+
+    segments[i][k].drawChequer();
+  
+}
+ctx.strokeStyle = "darkgrey";
+ctx.lineWidth = 3;
+ctx.strokeRect(segments[1][1].x-1,segments[1][1].y-1,size*blockSize+2,size*blockSize+2);
+}
+
+//doOver
+  //turnGrey
+  //turnBack
+$("canvas").mousemove(function (event){
+if(win===false){
+for (i=1;i<=size;i++)
+   for (k=1;k<=size;k++){
+timex=event.pageX-7;
+timey=event.pageY-262;
+left = segments[i][k].x;
+right = left + blockSize;
+up = segments[i][k].y;
+down = up + blockSize;console.log(timey,up);
+if (timex > left && timex < right && timey > up && timey<down){
+segments[i][k].turnGrey();
+} else{segments[i][k].turnBack()} 
+}
+}
+})
+
+
+//doClick
+var doClick = function () {
+ segments[i][k].setColor(i,k);
+ if(i > 1){segments[i-1][k].setColor(i-1,k)};
+ if(i < size){segments[i+1][k].setColor(i+1,k)};
+ if(k > 1){segments[i][k-1].setColor(i,k-1)};
+ if(k < size){segments[i][k+1].setColor(i,k+1)};
+ moves++;
+ document.getElementById('moves').innerText = moves;
+};
+$("canvas").mousedown(function (event){
+if (win===false){
+ for (i=1;i<=size;i++)
+    for (k=1;k<=size;k++){
+      timex=event.pageX-7;
+      timey=event.pageY-262;
+      left = segments[i][k].x;
+      right = left + blockSize;
+      up = segments[i][k].y;
+      down = up + blockSize;
+      if (timex > left && timex < right && timey > up && timey<down){
+        doClick();
+      };
+  };
+ countLights();
+}
+})
+
+
+     
+
+//newGame 
+var newGame = function () {
+      practiced = true;
+      win = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stopCount();
+      timedCount();
+      size = document.getElementById('gameSize').value;
+      if (size<3){size=3;};
+      if (size>12){size=12;};
+      document.getElementById('gameSize').value = size;
+      moves=0;
+      document.getElementById('moves').innerText = moves;
+      createBoard();
+}
+if (practiced===false){
+  createBoard();
+}
+</script>
+</p>
+</body>
+</html>
