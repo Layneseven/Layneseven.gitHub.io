@@ -1,7 +1,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>Light Game</title>
+<title>Flip Game</title>
 <style type="text/css">
 <!--
 .style1 {
@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<p align=center><big><span class="style1">Click the square! Can you light all the squares<big><strong>?</big></strong></span></big></p>
+<p align=center ><big><span class="style1">Click the square! Can you light all the squares<big><strong>?</big></strong></span></big></p>
 <p align=center class="style2">You can first practice with the size 3 board.<br>Then set the size as you like and click "Start new game".</br> </p>
 <p align=right class="style3">Think about strategy and shortcut! </p>
 <table width="50%" border=1 align=center>
@@ -202,8 +202,8 @@ $("canvas").mousemove(function (event){
 if(win===false){
 for (i=1;i<=size;i++)
    for (k=1;k<=size;k++){
-timex=event.pageX-7;
-timey=event.pageY-262;
+timex=event.pageX-8;
+timey=event.pageY-303;
 left = segments[i][k].x;
 right = left + blockSize;
 up = segments[i][k].y;
@@ -230,8 +230,8 @@ $("canvas").mousedown(function (event){
 if (win===false){
  for (i=1;i<=size;i++)
     for (k=1;k<=size;k++){
-      timex=event.pageX-7;
-      timey=event.pageY-262;
+      timex=event.pageX-8;
+      timey=event.pageY-303;
       left = segments[i][k].x;
       right = left + blockSize;
       up = segments[i][k].y;
@@ -243,7 +243,8 @@ if (win===false){
  countLights();
 }
 })
-
+$("p").height(50);
+$("table").height(50);
 
      
 
